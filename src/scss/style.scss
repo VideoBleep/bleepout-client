@@ -1,0 +1,42 @@
+@import "mixins";
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+body {
+  margin: 0;
+  background-color: #000;
+  display: table;
+}
+#container {
+  background-color: rgba(155, 71, 115, 1);
+  min-height: 100%;
+  @include animation(backgroundPulse, 7s, 1);
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+@keyframes backgroundPulse {
+  0% { opacity: 0 }
+  30% { opacity: 0 }
+  40% { opacity: 1 }
+  50% { opacity: .25 }
+  60% { opacity: 1 }
+  70% { opacity: .5 }
+  80% { opacity: 1 }
+  90% { opacity: .5 }
+  100% { opacity: 1 }
+}
+@-webkit-keyframes backgroundPulse {
+  0% { opacity: 0 }
+  30% { opacity: 0 }
+  40% { opacity: 1 }
+  50% { opacity: .25 }
+  60% { opacity: 1 }
+  70% { opacity: .5 }
+  80% { opacity: 1 }
+  90% { opacity: .5 }
+  100% { opacity: 1 }
+}

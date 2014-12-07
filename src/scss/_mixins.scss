@@ -1,0 +1,9 @@
+@mixin animation($animation, $speed, $count) {
+  animation: $animation $speed linear $count;
+  -webkit-animation: $animation $speed linear $count;
+}
+
+@mixin animation-delay($duration) {
+  -webkit-animation-delay: $duration;
+  animation-delay: $duration;
+}
