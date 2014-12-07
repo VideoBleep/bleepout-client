@@ -10,9 +10,11 @@ body {
   display: table;
 }
 #container {
+  // rgb vals will come from sway config response
+  // when client disconnects from bleepout, opacity changes to 0
   background-color: rgba(155, 71, 115, 1);
-  min-height: 100%;
   @include animation(backgroundPulse, 7s, 1);
+  min-height: 100%;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
