@@ -8,15 +8,6 @@
  */
 var sway = sway || {};
 
-// convert yaw, pitch, roll to arraybuffer
-function serializeableControl (yaw, pitch, roll) {
-    return {
-        toString: function () {
-            return 'ypr|' + yaw + '|' + pitch + '|' + roll;
-        }
-    };
-}
-
 /**
  * Sway.data.transformation - Scale and constrain data to appropriate values
  */
@@ -59,6 +50,7 @@ sway.data.transform = {
         }
         return value;
     },
+    // Transform (constrain / ratio / scale) all values
     transformValues: function (valueHash, config) {
         var keys = Object.keys(valueHash);
         for (var i=0; i<keys.length; i++) {
@@ -75,30 +67,6 @@ sway.data.transform = {
         }
     }
 };
-
-// Handle basic input
-sway.input = {
-    init: function () {},
-    handleOSCClick: function (address, value) {
-        if (sway.user) {
-            if (sway.user.token) {
-                var params = {
-                    token: sway.user.token,
-                    control: {
-                        address: address,
-                        value: value
-                    }};
-                //directly post the click event
-                sway.api.post(sway.config.url + sway.api.osc, params, {});
-            }
-        }
-    },
-    // Sliders are rotary knobs or fader / sliders.
-    handleSlider: function (sliderOptions, address, value) {
-
-    }
-};
-
 
 /**
  * Sway.motion - Created by Jim Ankrom on 9/14/2014.
@@ -138,6 +106,8 @@ sway.motion = {
     },
     // TODO: Orientation
     // TODO: Motion
+    motion: null,
+    icon: null,
     capabilities: {},
     calibration: {},
 
@@ -151,8 +121,7 @@ sway.motion = {
     // TODO: DeviceMotionEvent.accelerationIncludingGravity
     // TODO: DeviceMotionEvent.interval
     // TODO: DeviceMotionEvent.rotationRate
-    motion: null,
-    icon: null,
+
     renderIcon: function (e) {
         if (!sway.motion.icon) {
             var icon = document.createElement('img');

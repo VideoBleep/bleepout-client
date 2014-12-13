@@ -4,19 +4,28 @@
 var bleepout = bleepout || {};
 bleepout.debug = true;
 
-// convert yaw, pitch, roll to arraybuffer
-function serializeablePlayer (id, red, green, blue) {
-    return {
-        toString: function () {
-            return 'new|' + id + '|' + red + '|' + green + '|' + blue;
-        }
-    };
+// Realtime Message Serializers
+bleepout.messages = {
+    // convert yaw, pitch, roll to arraybuffer
+    newPlayer: function (id, red, green, blue)
+    {
+        return {
+            toString: function () {
+                return 'new|' + id + '|' + red + '|' + green + '|' + blue;
+            }
+        };
+    },
+
+    // convert yaw, pitch, roll to arraybuffer
+    control: function (yaw, pitch, roll) {
+        return {
+            toString: function () {
+                return 'ypr|' + yaw + '|' + pitch + '|' + roll;
+            }
+        };
+    }
 }
 
-// Connect to sway
-
-// wait for channel config
-// connect to socket
 // send socket message 'new' + id + red + green + blue
 (function () {
     // eio = engine.io

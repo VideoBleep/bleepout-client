@@ -15,6 +15,29 @@
  */
 var sway = sway || {};
 
+// Multicast Delegate for Event Handlers
+function multicast(callback) {
+    var self = this,
+        multicast = [];
+
+    if (callback) multicast.push(callback);
+    // invoke the delegate chain
+    function invoke () {
+        for (var i = 0; i < multicast.length; i++) {
+            multicast[i].apply(self, arguments);
+        }
+    }
+    // Add callback to the multicast
+    function add (callback) {
+        multicast.push(callback);
+        return this;
+    }
+
+    invoke.add = add;
+
+    return invoke;
+}
+
 // default config. Note that these values can be overwritten at any time by a message from sway
 //sway.hostname = "http://sway.videobleep.tv";
 sway.debugPanel = null;
@@ -84,10 +107,11 @@ sway.templates = {
  * Sway bootstrapping
  *
  */
-sway.oninitialized = function () {
+// sway oninitialized event - wire into this to run things once sway has been initialized.
+sway.oninitialized = multicast(function () {
     // initialize plugins here or override this
     sway.motion.init();
-};
+});
 
 sway.init = function () {
 
@@ -101,6 +125,7 @@ sway.init = function () {
     if (!(sway.config.url)) return sway.debug('sway.config.url is not set!');
     sway.user.authorize();
 
+    // TODO: replace this with an event system. Output should be up to implementations, not the library.
     sway.outputPanel = document.createElement('div');
     document.body.appendChild(sway.outputPanel);
 };
@@ -110,6 +135,7 @@ sway.user = {
     token: {},
     channel: {},
     user: {},
+    // TODO: Verify: Engine.io sockets already provide a heartbeat.
     setHeartbeat: function () {
         // set a value to compare to in setInterval closure
         var timestamp = Date.now();
@@ -159,17 +185,28 @@ sway.sockets = {
 
 // Sway API calls and utilities
 sway.api = {
+    onUserUpdate: multicast(function (res) {
+        sway.user.user = res.user;
+    }),
+    onUserToken: multicast(function (res) {
+        sway.user.token = res.token;
+    }),
+    onChannelChange: multicast(function (res) {
+        sway.user.channel = res.channel;
+        sway.config.channel = res.channel;
+    }),
+    onMessage: multicast(function (res) {
+        sway.alert(res.messages);
+    }),
     // Handles standard Sway Server return messages (non-request specific)
     processResponse: function (data) {
+        // TODO: Each of these should raise events, not just set the data.
         sway.config.update(data.config);
         //console.log(JSON.stringify(data.token));
-        if (data.user) sway.user.user = data.user;
-        if (data.token) sway.user.token = data.token;
-        if (data.channel) {
-            sway.user.channel = data.channel;
-            sway.config.channel = data.channel;
-        }
-        if (data.messages) sway.alert(data.messages);
+        if (data.user) sway.api.onUserUpdate(data);
+        if (data.token) sway.api.onUserToken(data);
+        if (data.channel) sway.api.onChannelChange(data);
+        if (data.messages) sway.api.onMessage(data);
         if (data.redirect) {
             document.location.href = data.redirect;
         }
