@@ -7,11 +7,14 @@
 
     <link rel="stylesheet" href="scss/style.css">
 </head>
-<body>
+<body onload="sway.init();">
+    <script type="text/javascript" src="lib/engine.io.js"></script>
+    <script type="text/javascript" src="lib/sway.input.js"></script>
+    <script type="text/javascript" src="lib/sway.user.js"></script>
+    <script type="text/javascript" src="lib/sway.location.js"></script>
+    <script type="text/javascript" src="scripts/bleepout.player.js"></script>
 
-<div id="container"></div>
-
-<script type="text/javascript" src="js/test1.js"></script>
-<script type="text/javascript" src="js/test2.js"></script>
+    <div id="debugPanel"></div>
+    <div id="container"></div>
 </body>
 </html>
