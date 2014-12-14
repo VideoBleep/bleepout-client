@@ -89,6 +89,8 @@ sway.data.transform = {
  */
 // Plugin to handle all motion events
 sway.motion = {
+    onMotion: multicast(),
+    onOrientation: multicast(),
     init: function () {
         // Detect Browser Capabilities and wire up events for each
         if (window.DeviceOrientationEvent) {
@@ -195,21 +197,22 @@ sway.motion = {
                         window.clearInterval(sway.poll);
                         return;
                     }
+
                     // for obvious reasons which won't appear obvious later ... this line must come after the check above
                     sway.motion.last = sway.motion.current;
+
                     // transform the values only when we want to send them to the server
-                    //if (!pluginConfig.orientation.gamma)
-                    //alert(JSON.stringify(pluginConfig.orientation));
                     sway.data.transform.transformValues(sway.motion.current.control.orientation, pluginConfig.orientation);
 
-                    var values = sway.motion.current.control.orientation;
+                    sway.motion.onOrientation(sway.motion.current.control.orientation);
 
-                    if (socket) {
-                        console.log('Values: ' + values.alpha  + ' '  + values.beta + ' ' + values.gamma);
-                        socket.send(serializeableControl(values.alpha, values.beta, values.gamma));
-                    } else {
-                        sway.api.post(sway.config.url + sway.config.api.control, sway.motion.current, {});
-                    }
+                    // TODO: Ensure these are wired up
+                    //if (socket) {
+                    //    // console.log('Values: ' + values.alpha  + ' '  + values.beta + ' ' + values.gamma);
+                    //    socket.send(serializeableControl(values.alpha, values.beta, values.gamma));
+                    //} else {
+                    //    sway.api.post(sway.config.url + sway.config.api.control, sway.motion.current, {});
+                    //}
 
                 }, sway.config.user.controlInterval);
             }

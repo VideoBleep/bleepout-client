@@ -21,7 +21,8 @@ function multicast(callback) {
         multicast = [];
 
     if (callback) multicast.push(callback);
-    // invoke the delegate chain
+
+    // Invoke the delegate list
     function invoke () {
         for (var i = 0; i < multicast.length; i++) {
             multicast[i].apply(self, arguments);
@@ -173,15 +174,16 @@ sway.user = {
     }
 };
 
-sway.sockets = {
-    init: function () {
-        sway.sockets.socket = io.connect(sway.config.socketAddress);
-        socket.on('user-update', sway.sockets.handleUpdate);
-    },
-    // handle updates from the server
-    handleUpdate: function (data) {},
-    emit: function () {}
-};
+// TODO: Is this working / correct?
+//sway.sockets = {
+//    init: function () {
+//        sway.sockets.socket = io.connect(sway.config.socketAddress);
+//        socket.on('user-update', sway.sockets.handleUpdate);
+//    },
+//    // handle updates from the server
+//    handleUpdate: function (data) {},
+//    emit: function () {}
+//};
 
 // Sway API calls and utilities
 sway.api = {
