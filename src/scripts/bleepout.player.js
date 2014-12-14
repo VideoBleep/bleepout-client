@@ -24,7 +24,7 @@ bleepout.messages = {
             }
         };
     }
-}
+};
 
 // send socket message 'new' + id + red + green + blue
 (function () {
