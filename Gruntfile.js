@@ -11,7 +11,6 @@
  * run "grunt minfiles" to process all files without inlining to index.html => .tmp/
  *
  */
-
 module.exports = function (grunt) {
     grunt.initConfig({
         clean: {
