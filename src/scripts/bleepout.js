@@ -7,19 +7,10 @@
  *
  */
 
-// Delimit all optional arguments with delimiter
-function delimit (delimiter) {
-    var out;
-    for (var i=1; i < arguments.length; i++)
-    {
-        if (out) { out+=delimiter; }
-        out+=arguments[i];
-    }
-    return out;
-}
-
 // Bleepout Namespace
 var bleepout = bleepout || {};
+
+bleepout.verbose = true;
 
 // Test config - will be removed later
 bleepout.playerConfig = {
@@ -32,39 +23,44 @@ bleepout.playerConfig = {
 };
 
 // Initialize bleepout
-bleepout.init = function () {
+bleepout.main = function () {
     // Sway has initialized before reaching here
     // TODO: Set player preferences
     var cfg = bleepout.playerConfig;
-    var socket = new sway.Socket(cfg);
+    var conn = new sway.Socket(cfg);
 
     // Add onOpen tasks
     // Create new player message
-    socket.onOpen.add(function () {
-        // message 'new' + id + red + green + blue
-        socket.send(delimit(cfg.delimiter, 'new',  cfg.id, cfg.red, cfg.blue, cfg.green));
+
+    conn.onConnect.add(function () {
+        // 'new' + id + red + green + blue
+        var m =  delimit(cfg.delimiter, 'new',  sway.user.token.uid, cfg.red, cfg.blue, cfg.green);
+        if (bleepout.verbose) console.log(m);
+        conn.send(m);
     });
 
     // Handle orientation event
     // convert yaw, pitch, roll to arraybuffer (FUTURE) and send it
     sway.motion.onOrientation.add(function (values) {
-        socket.send(delimit(delimiter, 'ypr', values.alpha, values.beta, values.gamma));
+        conn.send(delimit(cfg.delimiter, 'ypr', values.alpha, values.beta, values.gamma));
     });
+
+    conn.connect();
 
     // listen for close & message events
     //socket.onClose.add( FOO );
     //socket.onMessage.add( FOO );
 
-    // open the socket
-    socket.open();
 };
 
 bleepout.verbose = false;
 
+bleepout.init = function () {
 // Handle sway initialization with
-sway.oninitialized.add(bleepout.init);
+    sway.oninitialized.add(bleepout.main);
 
 // initialize sway
-sway.init();
+    sway.init();
+};
 
 

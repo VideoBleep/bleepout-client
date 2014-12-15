@@ -15,30 +15,6 @@
  */
 var sway = sway || {};
 
-// Multicast Delegate for Event Handlers
-function multicast(callback) {
-    var self = this,
-        multicast = [];
-
-    if (callback) multicast.push(callback);
-
-    // Invoke the delegate list
-    function invoke () {
-        for (var i = 0; i < multicast.length; i++) {
-            multicast[i].apply(self, arguments);
-        }
-    }
-    // Add callback to the multicast
-    function add (callback) {
-        multicast.push(callback);
-        return this;
-    }
-
-    invoke.add = add;
-
-    return invoke;
-}
-
 // default config. Note that these values can be overwritten at any time by a message from sway
 //sway.hostname = "http://sway.videobleep.tv";
 sway.debugPanel = null;

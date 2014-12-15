@@ -17,13 +17,14 @@ sway.Socket = function (config) {
     var self = this;
     this.verbose = false;
     var delimiter = config.delimiter || '|';
-    var socket = eio(config.socketAddress, { "transports": ['websocket']});
+    var socket;
 
     this.log = function (data) {
         if (self.verbose) console.log(data);
     };
 
     // Assign handlers
+    this.onConnect = multicast();
     this.onMessage = multicast(self.log);
     this.onClose = multicast(self.log);
     this.onError = multicast(function (error) {
@@ -35,11 +36,17 @@ sway.Socket = function (config) {
         socket.on('error', self.onError);
     });
 
-    function open () {
+    this.connect = function () {
+        socket = eio(config.socketAddress, { "transports": ['websocket']});
         socket.on('open', self.onOpen);
-    }
+        self.onConnect();
+    };
 
-
+    this.send = function (message) {
+        if (socket) {
+            socket.send(message);
+        }
+    };
 
     return this;
 };
