@@ -46,14 +46,7 @@ bleepout.main = function () {
     });
 
     conn.connect();
-
-    // listen for close & message events
-    //socket.onClose.add( FOO );
-    //socket.onMessage.add( FOO );
-
 };
-
-bleepout.verbose = false;
 
 bleepout.init = function () {
 // Handle sway initialization with
@@ -62,5 +55,3 @@ bleepout.init = function () {
 // initialize sway
     sway.init();
 };
-
-
