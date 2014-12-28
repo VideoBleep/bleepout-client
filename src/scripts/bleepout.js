@@ -24,7 +24,8 @@ bleepout.playerConfig = {
 
 // Set up listeners for game events
 bleepout.controller = function (socket) {
-    var prefixes = {
+    var states = this.states = {
+        "new": "new",
         "config": "cfg",
         "calibrate": "cal",
         "color": "col",
@@ -34,23 +35,8 @@ bleepout.controller = function (socket) {
         "ready": "rdy",
         "start": "start"
     };
-
-    // Action methods -------------------------
-    // these are the UI doing stuff
-    function actionSetColor () {
-        // get color from picker
-        // For now, we will assign one from sway config
-        // TODO: socket.send(delimit(socket.delimiter, prefixes.config, red, green, blue));
-    }
-    function actionSetCalibration () {
-        // TODO: Despite the sequence diagram, I believe nothing really gets sent here, calibration should be done in the UI
-    }
-    function actionPlayerStart () {
-        // TODO: socket.send(delimit(socket.delimiter, prefixes.start);
-    }
-    function actionPlayerQuit () {
-        // TODO: socket.send(delimit(socket.delimiter, prefixes.quit);
-    }
+    this.state = states.new;
+    
     // State control --------------------------
     // These are usually the game telling the UI what state we're in
     function onStateColor() {
@@ -78,6 +64,24 @@ bleepout.controller = function (socket) {
     function onStatePlay() {
         // TODO:
     }
+
+    // Action methods -------------------------
+    // these are the UI doing stuff
+    function actionSetColor () {
+        // get color from picker
+        // For now, we will assign one from sway config
+        socket.send(delimit(socket.delimiter, states.config, red, green, blue));
+    }
+    function actionSetCalibration () {
+        // TODO: Despite the sequence diagram, I believe nothing really gets sent here, calibration should be done in the UI
+    }
+    function actionPlayerStart () {
+        socket.send(delimit(socket.delimiter, states.start));
+    }
+    function actionPlayerQuit () {
+        socket.send(delimit(socket.delimiter, states.quit));
+    }
+
     // Parse & handle incoming messages
     function handleMessage (msg) {
         var pre,
