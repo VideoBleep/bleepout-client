@@ -51,19 +51,25 @@ bleepout.controller = function (socket) {
     function actionPlayerQuit () {
         // TODO: socket.send(delimit(socket.delimiter, prefixes.quit);
     }
-
     // State control --------------------------
     // These are usually the game telling the UI what state we're in
     function onStateColor() {
-        // launch color picker, and wire up actionSetColor to it as a handler
-        // For now, we will assign a color
+        // TODO: launch color picker, and wire up actionSetColor to it as a handler
+        // TODO: temporary:
+        alert("[Queued] Please wait for the next round to start!");
+        // TODO: For now, we will assign a color, this should be removed when complete
         actionSetColor();
     }
     function onStateQueued() {
         // TODO: Throw up a message saying 'wait for game to start'
+        // TODO: below is temporary, remove
+        alert("[Queued] Please wait for the next round to start!");
     }
     function onStateCalibration () {
+        // TODO: Take us out of Queued state
         // TODO: start calibration routines
+        // TODO: Below is temporary, remove
+        alert("[Calibrate] Please find your paddle, point your phone at it, and press OK!");
     }
     function onStateReady() {
         // Show the "Start Game" button
@@ -72,7 +78,6 @@ bleepout.controller = function (socket) {
     function onStatePlay() {
         // TODO:
     }
-
     // Parse & handle incoming messages
     function handleMessage (msg) {
         var pre,
@@ -138,10 +143,10 @@ bleepout.main = function () {
 };
 
 bleepout.init = function () {
-// Handle sway initialization with
+    // Handle sway initialization with
     sway.oninitialized.add(bleepout.main);
 
-// initialize sway
+    // initialize sway
     sway.init();
 };
 
