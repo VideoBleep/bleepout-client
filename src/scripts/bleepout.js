@@ -24,6 +24,7 @@ bleepout.playerConfig = {
 
 // Set up listeners for game events
 bleepout.controller = function (socket) {
+    var self = this;
     var states = this.states = {
         "new": "new",
         "config": "cfg",
@@ -36,7 +37,7 @@ bleepout.controller = function (socket) {
         "start": "start"
     };
     this.state = states.new;
-    
+
     // State control --------------------------
     // These are usually the game telling the UI what state we're in
     function onStateColor() {
@@ -89,31 +90,36 @@ bleepout.controller = function (socket) {
 
     // Parse & handle incoming messages
     function handleMessage (msg) {
-        var pre,
+        var state,
             pos = msg.indexOf(socket.delimiter);
         if (pos >= 0) {
-            pre = msg.substring(0, pos);
+            state = msg.substring(0, pos);
 
-            switch (pre) {
-                case prefixes.color:
+            switch (state) {
+                case states.color:
+                    self.state = state;
                     // Player needs to select color.
-                    this.onStateColor();
+                    self.onStateColor();
                     break;
-                case prefixes.queued:
+                case states.queued:
+                    self.state = state;
                     // Player is queued, waiting for round start / calibrate
-                    this.onStateQueued();
+                    self.onStateQueued();
                     break;
-                case prefixes.calibrate:
+                case states.calibrate:
+                    self.state = state;
                     // Round start: Player should calibrate.
-                    this.onStateCalibration();
+                    self.onStateCalibration();
                     break;
-                case prefixes.ready:
+                case states.ready:
+                    self.state = state;
                     // Game is ready, awaiting player ready
-                    this.onStateReady();
+                    self.onStateReady();
                     break;
-                case prefixes.play:
+                case states.play:
+                    self.state = state;
                     // Game is playing, send control
-                    this.onStatePlay();
+                    self.onStatePlay();
                     break;
                 default:
                     break;
@@ -145,7 +151,11 @@ bleepout.main = function () {
     // convert yaw, pitch, roll to arraybuffer (FUTURE) and send it
     sway.motion.onOrientation.add(function (values) {
         // TODO: switch between calibration modes and free control
-        conn.send(delimit(cfg.delimiter, 'ypr', values.alpha, values.beta, values.gamma));
+        if (ctl.state == ctl.states.calibrate) {
+            // TODO: while in calibration, our messages only update controller calibration
+        } else {
+            conn.send(delimit(cfg.delimiter, 'ypr', values.alpha, values.beta, values.gamma));
+        }
     });
 
     conn.connect();
