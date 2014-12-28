@@ -1,7 +1,7 @@
-$color-button: #ea7b3f;
+$color-button: transparent;
 
 .button {
-  margin: auto;
+  margin: 40% auto;
   border-radius: 500px;
   background-color: $color-button;
   max-height: 10%;
@@ -19,22 +19,8 @@ $color-button: #ea7b3f;
   box-shadow: inset 3px 3px 15px 1px rgba(255, 255, 255, 0.5), 0 0 10px rgba(0, 0, 0, 0.25);
 
   &:active {
-    position: relative;
-    top: 1px;
     box-shadow: none;
+    transition: all 0.5s ease-in-out;
+    background-color: rgba(255, 255, 255, 0.25);
   }
-  &:before{
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    box-shadow: inset -2px -2px 15px 1px rgba(0, 0, 0, 0.5);
-    left: 0; right: 0; bottom: 0;
-    border-radius: 500px;
-  }
-}
-.button-position {
-  position: relative;
-  top: 100px;
-  width: 100%;
 }
