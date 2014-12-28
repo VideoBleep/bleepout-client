@@ -16,17 +16,18 @@ var sway = sway || {};
 sway.Socket = function (config) {
     var self = this;
     this.verbose = true;
-    var delimiter = config.delimiter || '|';
+    var delimiter = this.delimiter = config.delimiter || '|';
     var socket;
 
-    this.log = function (data) {
-        if (self.verbose) console.log(data);
+    this.log = function (source, data) {
+        if (self.verbose && console) console.log('[' + source + ']: ' + JSON.stringify(data));
     };
 
     // Assign handlers
-    this.onConnect = multicast(self.log);
-    this.onMessage = multicast(self.log);
-    this.onClose = multicast(self.log);
+    this.onHandshake = multicast(self.log.bind(self, 'handshake'));
+    this.onConnect = multicast(self.log.bind(self, 'connect'));
+    this.onMessage = multicast(self.log.bind(self, 'message'));
+    this.onClose = multicast(self.log.bind(self, 'close'));
     this.onError = multicast(function (error) {
         //if (bleepout.debug && console)
         console.log('Socket Error: ' + error.message);
@@ -35,7 +36,7 @@ sway.Socket = function (config) {
         socket.on('message', self.onMessage);
         socket.on('close', self.onClose);
         socket.on('error', self.onError);
-        self.onConnect();
+        self.onConnect("Entering Connect");
     });
 
     this.connect = function () {
@@ -50,10 +51,12 @@ sway.Socket = function (config) {
         */
         socket = eio(config.socketAddress, { "transports": ['websocket']});
         socket.on('open', self.onOpen);
+        socket.on('handshake', self.onHandshake);
     };
 
     this.send = function (message) {
         if (socket) {
+            if (self.verbose) self.log('send', JSON.stringify(message));
             socket.send(message);
         }
     };
