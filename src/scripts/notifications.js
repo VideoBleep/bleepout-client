@@ -7,10 +7,6 @@ var notify = notify || {};
 notify.modal = document.getElementById('notification');
 notify.button = document.getElementById('notify-ok');
 
-notify.init = function () {
-    document.getElementById('quit-button').addEventListener('click', notify.quit, false);
-};
-
 // hide modal
 notify.dismiss = function () {
     notify.modal.className = 'hidden';
@@ -78,7 +74,13 @@ notify.queued = function () {
     notify.modal.firstElementChild.innerHTML = notify.msg.queued;
 };
 
-notify.quit = function () {
+notify.showQuit = function (callback) {
+    var button = document.getElementById('quit-button');
+    button.className = '';
+    button.addEventListener('click', notify.quit.call(this, callback), false);
+};
+
+notify.quit = function (quitCallback) {
     var buttonQuit = document.getElementById('notify-quit'),
         buttonNoquit = document.getElementById('notify-noquit'),
         hideButtons = function () {
@@ -96,7 +98,7 @@ notify.quit = function () {
             document.getElementById('quit-button').className = 'hidden';
             hideButtons();
             buttonNoquit.removeEventListener('click', yesListener, false);
-            //TODO: call bleepout.controller.actionPlayerQuit();
+            quitCallback();
     };
     notify.modal.className = 'notify';
     notify.modal.firstElementChild.innerHTML = notify.msg.quit;
@@ -120,9 +122,8 @@ notify.msg = {
 // we want modal to appear when the user turns their phone
 window.addEventListener('orientationchange', notify.orientation, false);
 
-notify.init();
 
 // test events - delete when complete
 //notify.quit();
 //notify.calibration();
-//window.addEventListener('orientationchange', notify.calibration, false);
+//window.addEventListener('orientationchange', notify.showQuit, false);
