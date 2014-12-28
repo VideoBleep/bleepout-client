@@ -47,9 +47,8 @@ bleepout.controller = function (socket) {
         actionSetColor();
     }
     function onStateQueued() {
-        // TODO: Throw up a message saying 'wait for game to start'
-        // TODO: below is temporary, remove
-        alert("[Queued] Please wait for the next round to start!");
+        // Throw up a message saying 'wait for game to start'
+        notify.queued();
     }
     function onStateCalibration () {
         // TODO: Take us out of Queued state
@@ -59,7 +58,13 @@ bleepout.controller = function (socket) {
     }
     function onStateReady() {
         // Show the "Start Game" button
-        // wire up handler to it to send start message
+        var start = document.getElementById('start-button');
+        start.className = 'button';
+
+        start.addEventListener('click', function () {
+            actionPlayerStart();
+            start.className = 'hidden';
+        }, false);
     }
     function onStatePlay() {
         // TODO:
