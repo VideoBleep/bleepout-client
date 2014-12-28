@@ -62,7 +62,7 @@ body {
 
 .ok {
   width: 60%;
-  margin: 0 auto;
+  margin: 5px 0 auto;
   border: 1px solid #777;
   background-color: transparent;
   border-radius: 5px;
@@ -79,11 +79,36 @@ body {
   }
 }
 
-.footer {
+.notify-footer {
   position: absolute;
   bottom: 10px;
   left: 0;
   width: 100%;
+}
+
+.main-footer {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+#quit-button {
+  width: 60%;
+  margin: 5px 0 auto;
+  padding: 5px 0;
+  border: 1px solid #777;
+  color: #777;
+  background-color: transparent;
+  border-radius: 5px;
+  outline: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  &:active {
+    background-color: rgba(120, 120, 120, .75);
+  }
 }
 
 @keyframes backgroundPulse {
