@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta content="width=device-width,initial-scale=1.0" name="viewport">
+  <meta charset="utf-8">
+  <title>.: bleepout :.</title>
+
+  <!-- build:css min_bleep.css -->
+  <link rel="stylesheet" href="scss/style.css">
+  <!-- endbuild -->
+</head>
+<body>
+<div id="background"></div>
+
+<div id="container">
+
+  <!-- button -->
+  <div class="button-position hidden"><div class="button">do something</div></div>
+
+  <!-- paddle -->
+  <div class="hidden" id="draggable"></div>
+
+  <!-- modal -->
+  <div id="notification-orientation" class="hidden">
+    <p>Bleepout will be even more awesome if you turn off your phone's screen rotation!</p>
+    <div class="footer">
+      <button class="ok" id="notify-ok">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- build:js min_bleep.js -->
+<script type="text/javascript" src="lib/cosinedesign.utility.js"></script>
+<script type="text/javascript" src="lib/engine.io.js"></script>
+<script type="text/javascript" src="lib/sway.socket.js"></script>
+<script type="text/javascript" src="lib/sway.input.js"></script>
+<script type="text/javascript" src="lib/sway.user.js"></script>
+<script type="text/javascript" src="scripts/bleepout.js"></script>
+<script type="text/javascript" src="scripts/draggable.js"></script>
+<script type="text/javascript" src="scripts/notifications.js"></script>
+<!-- endbuild -->
+
+<script>
+  window.onload = function () {
+    window.DeviceOrientationEvent ? bleepout.init() : drag.init();
+  }
+</script>
+
+<div id="debugPanel"></div>
+
+</body>
+</html>

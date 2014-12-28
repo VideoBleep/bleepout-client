@@ -1,4 +1,5 @@
 @import "mixins";
+@import "button";
 
 html, body {
   height: 100%;
@@ -7,17 +8,81 @@ html, body {
 body {
   margin: 0;
   background-color: #000;
-  display: table;
 }
-#container {
+
+.paddle {
+  width: 20%;
+  height: 4%;
+  color: #ff8744;
+  background-color: #ff8744;
+  font-size: 0;
+  border-radius: 2px;
+  margin: auto;
+  box-shadow: inset 1px 1px 10px 1px rgba(255, 255, 255, 0.5), 0 0 10px rgba(0, 0, 0, 0.25);
+}
+
+#background {
   // rgb vals will come from sway config response
   // when client disconnects from bleepout, opacity changes to 0
   background-color: rgba(155, 71, 115, 1);
   @include animation(backgroundPulse, 7s, 1);
   min-height: 100%;
-  display: table-cell;
-  vertical-align: middle;
   text-align: center;
+}
+#container {
+  position: absolute;
+  top: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.hidden {
+  display: none;
+  transition: all .5s ease-in-out;
+}
+
+.notification {
+  box-sizing: border-box;
+  position: absolute;
+  width: 80%;
+  min-height: 40%;
+  margin: 20% 10%;
+  padding: 5%;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, .5);
+  color: #000;
+  text-align: center;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, .5);
+  font-family: "open sans", sans-serif;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all .5s ease-in-out;
+}
+
+.ok {
+  width: 60%;
+  margin: 0 auto;
+  border: 1px solid #777;
+  background-color: transparent;
+  border-radius: 5px;
+  outline: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, .5);
+  box-shadow: inset -1px -1px 3px rgba(255, 255, 255, .25);
+  &:active {
+    background-color: rgba(255, 255, 255, .75);
+  }
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
 }
 
 @keyframes backgroundPulse {
