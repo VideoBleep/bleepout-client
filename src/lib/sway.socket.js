@@ -10,6 +10,17 @@
  *   - Engine.io ( repo at https://github.com/Automattic/engine.io-client )
  *   - Multicast ( clone at https://gist.github.com/087c895971dc20ce9e37.git )
  *
+ *   Reference:
+ *   engine.io's packet prefixes -
+   var packets = exports.packets = {
+        open:     0    // non-ws
+      , close:    1    // non-ws
+      , ping:     2
+      , pong:     3
+      , message:  4
+      , upgrade:  5
+      , noop:     6
+    };
  */
 var sway = sway || {};
 
