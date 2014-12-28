@@ -59,15 +59,19 @@ bleepout.controller = function (socket) {
         // For now, we will assign a color
         actionSetColor();
     }
-    function onStateQueued() {}
+    function onStateQueued() {
+        // TODO: Throw up a message saying 'wait for game to start'
+    }
     function onStateCalibration () {
-
+        // TODO: start calibration routines
     }
     function onStateReady() {
         // Show the "Start Game" button
         // wire up handler to it to send start message
     }
-    function onStatePlay() {}
+    function onStatePlay() {
+        // TODO:
+    }
 
     // Parse & handle incoming messages
     function handleMessage (msg) {
@@ -126,6 +130,7 @@ bleepout.main = function () {
     // Handle orientation event
     // convert yaw, pitch, roll to arraybuffer (FUTURE) and send it
     sway.motion.onOrientation.add(function (values) {
+        // TODO: switch between calibration modes and free control
         conn.send(delimit(cfg.delimiter, 'ypr', values.alpha, values.beta, values.gamma));
     });
 
@@ -140,7 +145,15 @@ bleepout.init = function () {
     sway.init();
 };
 
+// bleepout View constructor
+bleepout.View = function (element) {
+    this.el = element;
+    this.show = function () {};
+    this.hide = function () {};
+};
+
 // Set up views for game states
 bleepout.views = function () {
-
+    // TODO: assign element
+    this.Queue = new bleepout.View();
 }();
