@@ -29,6 +29,7 @@ bleepout.controller = function (socket) {
         "new": "new",
         "config": "cfg",
         "calibrate": "cal",
+        "calibrationSet": "cst",
         "color": "col",
         "play": "play",
         "queued": "que",
@@ -52,10 +53,10 @@ bleepout.controller = function (socket) {
         notify.queued();
     }
     function onStateCalibration () {
-        // TODO: Take us out of Queued state
-        // TODO: start calibration routines
-        // TODO: Below is temporary, remove
-        alert("[Calibrate] Please find your paddle, point your phone at it, and press OK!");
+        // Take us out of Queued state
+        notify.dismiss();
+        // start calibration routines
+        notify.calibration(actionSetCalibration);
     }
     function onStateReady() {
         // Show the "Start Game" button
@@ -79,12 +80,19 @@ bleepout.controller = function (socket) {
         socket.send(delimit(socket.delimiter, states.config, red, green, blue));
     }
     function actionSetCalibration () {
+        // Set state to calibrationSet, which waits for game ready but also freezes our current calibration
+        self.state = states.calibrationSet;
+        // TODO: Take current calibration settings and calculate our offset
+        // this should be initial.yaw - calibration.yaw
         // TODO: Despite the sequence diagram, I believe nothing really gets sent here, calibration should be done in the UI
+        // TODO: notify bleepout that we are done with calibration
+        // TODO: OR we should just proceed to game ready
     }
     function actionPlayerStart () {
         socket.send(delimit(socket.delimiter, states.start));
     }
     function actionPlayerQuit () {
+        self.state = states.quit;
         socket.send(delimit(socket.delimiter, states.quit));
     }
 
@@ -99,27 +107,28 @@ bleepout.controller = function (socket) {
                 case states.color:
                     self.state = state;
                     // Player needs to select color.
-                    self.onStateColor();
+                    onStateColor();
                     break;
                 case states.queued:
                     self.state = state;
                     // Player is queued, waiting for round start / calibrate
-                    self.onStateQueued();
+                    onStateQueued();
                     break;
                 case states.calibrate:
                     self.state = state;
                     // Round start: Player should calibrate.
-                    self.onStateCalibration();
+                    onStateCalibration();
                     break;
                 case states.ready:
                     self.state = state;
                     // Game is ready, awaiting player ready
-                    self.onStateReady();
+                    notify.quit(actionPlayerQuit);
+                    onStateReady();
                     break;
                 case states.play:
                     self.state = state;
                     // Game is playing, send control
-                    self.onStatePlay();
+                    onStatePlay();
                     break;
                 default:
                     break;
@@ -137,7 +146,8 @@ bleepout.main = function () {
     var cfg = bleepout.playerConfig;
     var conn = new sway.Socket(cfg);
     var ctl = new bleepout.controller(conn);
-
+    var currentCalibration = null;
+    var initialCalibration = null;
     // Add onOpen tasks
     // Create new player message
 
@@ -150,11 +160,19 @@ bleepout.main = function () {
     // Handle orientation event
     // convert yaw, pitch, roll to arraybuffer (FUTURE) and send it
     sway.motion.onOrientation.add(function (values) {
-        // TODO: switch between calibration modes and free control
-        if (ctl.state == ctl.states.calibrate) {
-            // TODO: while in calibration, our messages only update controller calibration
-        } else {
-            conn.send(delimit(cfg.delimiter, 'ypr', values.alpha, values.beta, values.gamma));
+        if (!initialCalibration) initialCalibration = values;
+        // Switch between calibration modes and free control
+        var s = ctl.states;
+        switch (ctl.state) {
+            case s.quit:
+                break;
+            case s.calibrate:
+                // While in calibration, orientation messages should only update controller calibration
+                currentCalibration = values;
+                break;
+            default:
+                conn.send(delimit(cfg.delimiter, 'ypr', values.alpha, values.beta, values.gamma));
+                break;
         }
     });
 
