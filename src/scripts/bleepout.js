@@ -23,7 +23,7 @@ bleepout.playerConfig = {
 };
 
 // Set up listeners for game events
-bleepout.controller = function (socket) {
+bleepout.controller = function (socket, config) {
     var self = this;
     var states = this.states = {
         "new": "new",
@@ -69,26 +69,39 @@ bleepout.controller = function (socket) {
         }, false);
     }
     function onStatePlay() {
-        // TODO:
+        // TODO: clear all dialogs
     }
 
     // Action methods -------------------------
     // these are the UI doing stuff
+    function actionPlayerNew () {
+        self.state = states.new;
+        // 'new' + id + red + green + blue
+        var m =  delimit(config.delimiter, 'new',  sway.user.token.uid, config.red, config.blue, config.green);
+        socket.send(m);
+    };
+    // Make PlayerNew public
+    this.actionPlayerNew = actionPlayerNew;
+
+    // TODO: Set color (NOT YET IMPLEMENTED IN CURRENT VERSION)
     function actionSetColor () {
+        self.state = states.config;
         // get color from picker
         // For now, we will assign one from sway config
         socket.send(delimit(socket.delimiter, states.config, red, green, blue));
     }
     function actionSetCalibration () {
-        // Set state to calibrationSet, which waits for game ready but also freezes our current calibration
-        self.state = states.calibrationSet;
         // TODO: Take current calibration settings and calculate our offset
         // this should be initial.yaw - calibration.yaw
         // TODO: Despite the sequence diagram, I believe nothing really gets sent here, calibration should be done in the UI
+        // Set state to calibrationSet, which waits for game ready but also freezes our current calibration
+        self.state = states.calibrationSet;
         // TODO: notify bleepout that we are done with calibration
+        socket.send(states.calibrate);
         // TODO: OR we should just proceed to game ready
     }
     function actionPlayerStart () {
+        self.state = states.start;
         socket.send(delimit(socket.delimiter, states.start));
     }
     function actionPlayerQuit () {
@@ -122,7 +135,7 @@ bleepout.controller = function (socket) {
                 case states.ready:
                     self.state = state;
                     // Game is ready, awaiting player ready
-                    notify.quit(actionPlayerQuit);
+                    notify.showQuit(actionPlayerQuit);
                     onStateReady();
                     break;
                 case states.play:
@@ -136,31 +149,32 @@ bleepout.controller = function (socket) {
         }
     }
 
-    socket.onMessage.add(handleMessage.bind(this));
+    // Add socket handlers
+    socket.onConnect.add(actionPlayerNew);
+    socket.onMessage.add(handleMessage);
+};
+
+bleepout.calibration = {
+    current: null,
+    initial: null,
+    offset: null
 };
 
 // Initialize bleepout
 bleepout.main = function () {
     // Sway has initialized before reaching here
-    // TODO: Set player preferences
     var cfg = bleepout.playerConfig;
     var conn = new sway.Socket(cfg);
-    var ctl = new bleepout.controller(conn);
-    var currentCalibration = null;
-    var initialCalibration = null;
-    // Add onOpen tasks
-    // Create new player message
+    var ctl = new bleepout.controller(conn, config);
 
-    conn.onConnect.add(function () {
-        // 'new' + id + red + green + blue
-        var m =  delimit(cfg.delimiter, 'new',  sway.user.token.uid, cfg.red, cfg.blue, cfg.green);
-        conn.send(m);
-    });
-
+    // TODO: Consider moving below to the controller
     // Handle orientation event
     // convert yaw, pitch, roll to arraybuffer (FUTURE) and send it
-    sway.motion.onOrientation.add(function (values) {
-        if (!initialCalibration) initialCalibration = values;
+    sway.motion.onOrientation.add(function (orient) {
+        var cal = bleepout.calibration;
+        if (!cal.initial) {
+            cal.initial = { yaw: orient.alpha };
+        }
         // Switch between calibration modes and free control
         var s = ctl.states;
         switch (ctl.state) {
@@ -168,10 +182,12 @@ bleepout.main = function () {
                 break;
             case s.calibrate:
                 // While in calibration, orientation messages should only update controller calibration
-                currentCalibration = values;
+                cal.current = { yaw: orient.alpha };
                 break;
             default:
-                conn.send(delimit(cfg.delimiter, 'ypr', values.alpha, values.beta, values.gamma));
+                var yaw = orient.alpha;
+                if (cal.offset) yaw += cal.offset.yaw;
+                conn.send(delimit(cfg.delimiter, 'ypr', orient.alpha, orient.beta, orient.gamma));
                 break;
         }
     });
@@ -186,16 +202,3 @@ bleepout.init = function () {
     // initialize sway
     sway.init();
 };
-
-// bleepout View constructor
-bleepout.View = function (element) {
-    this.el = element;
-    this.show = function () {};
-    this.hide = function () {};
-};
-
-// Set up views for game states
-bleepout.views = function () {
-    // TODO: assign element
-    this.Queue = new bleepout.View();
-}();
