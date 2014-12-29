@@ -60,13 +60,7 @@ bleepout.controller = function (socket, config) {
     }
     function onStateReady() {
         // Show the "Start Game" button
-        var start = document.getElementById('start-button');
-        start.className = 'button';
-
-        start.addEventListener('click', function () {
-            actionPlayerStart();
-            start.className = 'hidden';
-        }, false);
+        notify.startPlay(actionPlayerStart);
     }
     function onStatePlay() {
         // TODO: clear all dialogs
