@@ -153,6 +153,17 @@ notify.quit = function (quitCallback) {
     buttonNo.addEventListener('click', noListener, false);
 };
 
+// when everything is ready to go for the user's device, show button and begin play on click
+notify.startPlay = function (callback) {
+    var startButton = document.getElementById('start-button'),
+        goPlay = function () {
+            startButton.className = 'hidden';
+            startButton.removeEventListener('click', goPlay, false);
+            callback();
+        };
+    startButton.className = 'button';
+    startButton.addEventListener('click', goPlay, false);
+};
 
 // helpers
 notify.showYesNo = function () {
@@ -186,6 +197,6 @@ window.addEventListener('orientationchange', notify.orientation, false);
 
 
 // test events - delete when complete
-notify.roundEnd();
+notify.startPlay();
 //notify.calibration();
 //window.addEventListener('orientationchange', notify.showQuit, false);
