@@ -74,9 +74,12 @@ notify.queued = function () {
     notify.modal.firstElementChild.innerHTML = notify.msg.queued;
 };
 
-notify.roundEnd = function (quitCallback, continueCallback) {
+
+// the round has ended, but the player will be allowed to continue if they desire
+notify.roundEnd = function (continueCallback) {
     var buttonYes = document.getElementById('notify-yes'),
         buttonNo = document.getElementById('notify-no'),
+        // user decides to keep playing:
         yesListener = function () {
             notify.modal.firstElementChild.innerHTML = notify.msg.waitnext;
             notify.hideYesNo();
@@ -84,11 +87,12 @@ notify.roundEnd = function (quitCallback, continueCallback) {
             buttonNo.removeEventListener('click', yesListener, false);
             continueCallback();
         },
+        // user decides to stop when prompted to; send to "are you sure?" notification
         noListener = function () {
-            notify.modal.firstElementChild.innerHTML = notify.msg.goodbye;
             notify.hideYesNo();
             buttonNo.removeEventListener('click', noListener, false);
-            quitCallback();
+            buttonYes.removeEventListener('click', yesListener, false);
+            notify.quit();
         };
     notify.modal.className = 'notify';
     notify.modal.firstElementChild.innerHTML = notify.msg.roundend;
@@ -98,6 +102,7 @@ notify.roundEnd = function (quitCallback, continueCallback) {
     buttonNo.addEventListener('click', noListener, false);
 };
 
+// the round has ended, and the user's time is up and will be removed from the game
 notify.gameOver = function (quitCallback) {
     var listener = function () {
         notify.dismiss();
@@ -110,22 +115,29 @@ notify.gameOver = function (quitCallback) {
     notify.button.addEventListener('click', listener, false);
 };
 
+// shows the quit button that is visible during play
 notify.showQuit = function (callback) {
     var button = document.getElementById('quit-button');
     button.className = '';
     button.addEventListener('click', notify.quit.call(this, callback), false);
 };
 
+// user is about to quit; show confirmation notification
 notify.quit = function (quitCallback) {
+    //TODO: this method is used in two places: a player deciding to quit in the middle of a session, or at roundEnd;
+    //TODO: modify this method to account for both scenarios
     var buttonYes = document.getElementById('notify-yes'),
         buttonNo = document.getElementById('notify-no'),
 
+        // user decides not to quit game
         noListener = function () {
             notify.modal.firstElementChild.innerHTML = "Sweet!";
             notify.hideYesNo();
             setTimeout(notify.dismiss, 1000);
             buttonNo.removeEventListener('click', noListener, false);
         },
+
+    // user confirms that yes, they want to quit
         yesListener = function () {
             notify.modal.firstElementChild.innerHTML = notify.msg.goodbye;
             document.getElementById('quit-button').className = 'hidden';
