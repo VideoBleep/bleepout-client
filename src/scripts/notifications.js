@@ -74,39 +74,98 @@ notify.queued = function () {
     notify.modal.firstElementChild.innerHTML = notify.msg.queued;
 };
 
+
+// the round has ended, but the player will be allowed to continue if they desire
+notify.roundEnd = function (continueCallback) {
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no'),
+        // user decides to keep playing:
+        yesListener = function () {
+            notify.modal.firstElementChild.innerHTML = notify.msg.waitnext;
+            notify.hideYesNo();
+            setTimeout(notify.dismiss, 5000);
+            buttonNo.removeEventListener('click', yesListener, false);
+            continueCallback();
+        },
+        // user decides to stop when prompted to; send to "are you sure?" notification
+        noListener = function () {
+            notify.hideYesNo();
+            buttonNo.removeEventListener('click', noListener, false);
+            buttonYes.removeEventListener('click', yesListener, false);
+            notify.quit();
+        };
+    notify.modal.className = 'notify';
+    notify.modal.firstElementChild.innerHTML = notify.msg.roundend;
+    notify.showYesNo();
+
+    buttonYes.addEventListener('click', yesListener, false);
+    buttonNo.addEventListener('click', noListener, false);
+};
+
+// the round has ended, and the user's time is up and will be removed from the game
+notify.gameOver = function (quitCallback) {
+    var listener = function () {
+        notify.dismiss();
+        quitCallback();
+        notify.button.removeEventListener('click', listener, false);
+    };
+    notify.modal.className = 'notify';
+    notify.modal.firstElementChild.innerHTML = notify.msg.gameover;
+    notify.button.className = 'ok';
+    notify.button.addEventListener('click', listener, false);
+};
+
+// shows the quit button that is visible during play
 notify.showQuit = function (callback) {
     var button = document.getElementById('quit-button');
     button.className = '';
     button.addEventListener('click', notify.quit.call(this, callback), false);
 };
 
+// user is about to quit; show confirmation notification
 notify.quit = function (quitCallback) {
-    var buttonQuit = document.getElementById('notify-quit'),
-        buttonNoquit = document.getElementById('notify-noquit'),
-        hideButtons = function () {
-            buttonQuit.className = 'hidden';
-            buttonNoquit.className = 'hidden';
-        },
+    //TODO: this method is used in two places: a player deciding to quit in the middle of a session, or at roundEnd;
+    //TODO: modify this method to account for both scenarios
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no'),
+
+        // user decides not to quit game
         noListener = function () {
             notify.modal.firstElementChild.innerHTML = "Sweet!";
-            hideButtons();
+            notify.hideYesNo();
             setTimeout(notify.dismiss, 1000);
-            buttonNoquit.removeEventListener('click', noListener, false);
-        };
+            buttonNo.removeEventListener('click', noListener, false);
+        },
+
+    // user confirms that yes, they want to quit
         yesListener = function () {
             notify.modal.firstElementChild.innerHTML = notify.msg.goodbye;
             document.getElementById('quit-button').className = 'hidden';
-            hideButtons();
-            buttonNoquit.removeEventListener('click', yesListener, false);
+            notify.hideYesNo();
+            buttonNo.removeEventListener('click', yesListener, false);
             quitCallback();
     };
     notify.modal.className = 'notify';
     notify.modal.firstElementChild.innerHTML = notify.msg.quit;
-    buttonQuit.className = 'ok';
-    buttonNoquit.className = 'ok';
+    notify.showYesNo();
 
-    buttonQuit.addEventListener('click', yesListener, false);
-    buttonNoquit.addEventListener('click', noListener, false);
+    buttonYes.addEventListener('click', yesListener, false);
+    buttonNo.addEventListener('click', noListener, false);
+};
+
+
+// helpers
+notify.showYesNo = function () {
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no');
+    buttonYes.className = 'ok';
+    buttonNo.className = 'ok';
+};
+notify.hideYesNo = function () {
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no');
+    buttonYes.className = 'hidden';
+    buttonNo.className = 'hidden';
 };
 
 // this obj stores all message text strings
@@ -116,7 +175,10 @@ notify.msg = {
     calibration1: "Let's begin calibration.",
     calibration2: "Please find your paddle on the wall, point your phone at it, and press OK!",
     quit: "Do you really want to quit?",
-    goodbye: "Thanks for Bleeping Out with us!"
+    goodbye: "Thanks for Bleeping Out with us!",
+    roundend: "Round over. Would you like to keep playing?",
+    waitnext: "Awesome! Please wait for the next round to begin.",
+    gameover: "Round over. Your time is up: thanks for Bleeping Out with us!"
 };
 
 // we want modal to appear when the user turns their phone
@@ -124,6 +186,6 @@ window.addEventListener('orientationchange', notify.orientation, false);
 
 
 // test events - delete when complete
-//notify.quit();
+notify.roundEnd();
 //notify.calibration();
 //window.addEventListener('orientationchange', notify.showQuit, false);
