@@ -74,6 +74,42 @@ notify.queued = function () {
     notify.modal.firstElementChild.innerHTML = notify.msg.queued;
 };
 
+notify.roundEnd = function (quitCallback, continueCallback) {
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no'),
+        yesListener = function () {
+            notify.modal.firstElementChild.innerHTML = notify.msg.waitnext;
+            notify.hideYesNo();
+            setTimeout(notify.dismiss, 5000);
+            buttonNo.removeEventListener('click', yesListener, false);
+            continueCallback();
+        },
+        noListener = function () {
+            notify.modal.firstElementChild.innerHTML = notify.msg.goodbye;
+            notify.hideYesNo();
+            buttonNo.removeEventListener('click', noListener, false);
+            quitCallback();
+        };
+    notify.modal.className = 'notify';
+    notify.modal.firstElementChild.innerHTML = notify.msg.roundend;
+    notify.showYesNo();
+
+    buttonYes.addEventListener('click', yesListener, false);
+    buttonNo.addEventListener('click', noListener, false);
+};
+
+notify.gameOver = function (quitCallback) {
+    var listener = function () {
+        notify.dismiss();
+        quitCallback();
+        notify.button.removeEventListener('click', listener, false);
+    };
+    notify.modal.className = 'notify';
+    notify.modal.firstElementChild.innerHTML = notify.msg.gameover;
+    notify.button.className = 'ok';
+    notify.button.addEventListener('click', listener, false);
+};
+
 notify.showQuit = function (callback) {
     var button = document.getElementById('quit-button');
     button.className = '';
@@ -81,32 +117,43 @@ notify.showQuit = function (callback) {
 };
 
 notify.quit = function (quitCallback) {
-    var buttonQuit = document.getElementById('notify-quit'),
-        buttonNoquit = document.getElementById('notify-noquit'),
-        hideButtons = function () {
-            buttonQuit.className = 'hidden';
-            buttonNoquit.className = 'hidden';
-        },
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no'),
+
         noListener = function () {
             notify.modal.firstElementChild.innerHTML = "Sweet!";
-            hideButtons();
+            notify.hideYesNo();
             setTimeout(notify.dismiss, 1000);
-            buttonNoquit.removeEventListener('click', noListener, false);
-        };
+            buttonNo.removeEventListener('click', noListener, false);
+        },
         yesListener = function () {
             notify.modal.firstElementChild.innerHTML = notify.msg.goodbye;
             document.getElementById('quit-button').className = 'hidden';
-            hideButtons();
-            buttonNoquit.removeEventListener('click', yesListener, false);
+            notify.hideYesNo();
+            buttonNo.removeEventListener('click', yesListener, false);
             quitCallback();
     };
     notify.modal.className = 'notify';
     notify.modal.firstElementChild.innerHTML = notify.msg.quit;
-    buttonQuit.className = 'ok';
-    buttonNoquit.className = 'ok';
+    notify.showYesNo();
 
-    buttonQuit.addEventListener('click', yesListener, false);
-    buttonNoquit.addEventListener('click', noListener, false);
+    buttonYes.addEventListener('click', yesListener, false);
+    buttonNo.addEventListener('click', noListener, false);
+};
+
+
+// helpers
+notify.showYesNo = function () {
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no');
+    buttonYes.className = 'ok';
+    buttonNo.className = 'ok';
+};
+notify.hideYesNo = function () {
+    var buttonYes = document.getElementById('notify-yes'),
+        buttonNo = document.getElementById('notify-no');
+    buttonYes.className = 'hidden';
+    buttonNo.className = 'hidden';
 };
 
 // this obj stores all message text strings
@@ -116,7 +163,10 @@ notify.msg = {
     calibration1: "Let's begin calibration.",
     calibration2: "Please find your paddle on the wall, point your phone at it, and press OK!",
     quit: "Do you really want to quit?",
-    goodbye: "Thanks for Bleeping Out with us!"
+    goodbye: "Thanks for Bleeping Out with us!",
+    roundend: "Round over. Would you like to keep playing?",
+    waitnext: "Awesome! Please wait for the next round to begin.",
+    gameover: "Round over. Your time is up: thanks for Bleeping Out with us!"
 };
 
 // we want modal to appear when the user turns their phone
@@ -124,6 +174,6 @@ window.addEventListener('orientationchange', notify.orientation, false);
 
 
 // test events - delete when complete
-//notify.quit();
+notify.roundEnd();
 //notify.calibration();
 //window.addEventListener('orientationchange', notify.showQuit, false);
