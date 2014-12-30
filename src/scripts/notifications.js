@@ -9,7 +9,11 @@ notify.button = document.getElementById('notify-ok');
 
 // hide modal
 notify.dismiss = function () {
-    notify.modal.className = 'hidden';
+    notify.modal.className = 'hidefade';
+    if (document.getElementById('notify-ok')) {document.getElementById('notify-ok').className = 'hidden'}
+    if (document.getElementById('notify-yes')) {document.getElementById('notify-yes').className = 'hidden'}
+    if (document.getElementById('notify-no')) {document.getElementById('notify-no').className = 'hidden'}
+    notify.modal.firstElementChild.innerHTML = '';
 };
 
 // a user's device must be calibrated in order to control a paddle properly
@@ -179,6 +183,22 @@ notify.hideYesNo = function () {
     buttonNo.className = 'hidden';
 };
 
+notify.test = function () {
+    var modal = document.getElementById('notification'),
+        button = document.getElementById('notify-ok'),
+        listener = function () {
+            notify.dismiss();
+        };
+    notify.modal.firstElementChild.innerHTML = notify.msg.test;
+    modal.className = 'notify';
+
+    // enable dismissal button
+    button.className = 'ok';
+    button.addEventListener('click', listener, false);
+};
+
+
+
 // this obj stores all message text strings
 notify.msg = {
     queued: "Welcome to Bleepout! You are in the queue; please wait for the next round.",
@@ -189,14 +209,15 @@ notify.msg = {
     goodbye: "Thanks for Bleeping Out with us!",
     roundend: "Round over. Would you like to keep playing?",
     waitnext: "Awesome! Please wait for the next round to begin.",
-    gameover: "Round over. Your time is up: thanks for Bleeping Out with us!"
+    gameover: "Round over. Your time is up: thanks for Bleeping Out with us!",
+    test: "Test message"
 };
 
 // we want modal to appear when the user turns their phone
-window.addEventListener('orientationchange', notify.orientation, false);
+//window.addEventListener('orientationchange', notify.orientation, false);
 
 
 // test events - delete when complete
-notify.startPlay();
+//notify.showQuit();
 //notify.calibration();
-//window.addEventListener('orientationchange', notify.showQuit, false);
+window.addEventListener('orientationchange', notify.startPlay, false);
