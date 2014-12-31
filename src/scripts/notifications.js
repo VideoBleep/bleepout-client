@@ -41,7 +41,7 @@ notify.calibration = function (callbackTest, callbackSet) {
     function start() {
         // "let's begin calibration!"
         notify.modal.className = 'notify';
-
+        content.innerHTML = notify.msg.calibration1;
         // enable button
         notify.button.className = 'ok';
         notify.button.addEventListener('click', controller, false);
