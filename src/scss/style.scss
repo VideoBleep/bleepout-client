@@ -30,6 +30,7 @@ body {
   min-height: 100%;
   text-align: center;
 }
+
 #container {
   position: absolute;
   top: 0;
@@ -37,9 +38,12 @@ body {
   min-height: 100%;
 }
 
+.hidefade {
+  opacity: 0;
+}
+
 .hidden {
   display: none;
-  transition: all .5s ease-in-out;
 }
 
 .notify {
@@ -57,7 +61,8 @@ body {
   font-family: "open sans", sans-serif;
   font-weight: bold;
   font-size: 1.2rem;
-  transition: all .5s ease-in-out;
+  opacity: 1;
+  transition: opacity .2s ease-in-out;
 }
 
 .ok {
@@ -92,6 +97,7 @@ body {
   width: 100%;
   text-align: center;
 }
+
 #quit-button {
   width: 60%;
   margin: 5px 0 auto;
