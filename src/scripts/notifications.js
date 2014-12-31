@@ -50,7 +50,6 @@ notify.calibration = function (callback) {
     function calibrate() {
         // user initiates calibration method
         content.innerHTML = notify.msg.calibration2;
-        callback();
     }
 
     function confirm() {
@@ -69,6 +68,7 @@ notify.calibration = function (callback) {
 
     // user clicks yes, calibration is good
         function yesListener() {
+            callback();
             content.innerHTML = notify.msg.getready;
             notify.hideYesNo();
             setTimeout(notify.dismiss, 5000);
