@@ -22,6 +22,7 @@ bleepout.calibration = {
 // Test config - will be removed later
 bleepout.playerConfig = {
     "socketAddress": "ws://localhost:3500",
+    //"socketAddress": "ws://192.168.1.254:3500",
     "color": "FFCC66",
     "red": 255,
     "green": 204,
