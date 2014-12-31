@@ -99,6 +99,7 @@ bleepout.controller = function (socket, config) {
         socket.send(delimit(socket.delimiter, states.start));
     }
     function actionPlayerQuit () {
+        // TODO: JESS: Set quit cookie here
         self.state = states.quit;
         socket.send(delimit(socket.delimiter, states.quit));
     }
@@ -198,6 +199,9 @@ bleepout.main = function () {
 bleepout.init = function () {
     // HEY GUYS I HAVE AN IDEA LET'S NOT USE SWAY AT ALL
     bleepout.main();
+
+    // TODO: JESS: Check for quit cookie here
+
 
     //sway.oninitialized.add(bleepout.main);
 
