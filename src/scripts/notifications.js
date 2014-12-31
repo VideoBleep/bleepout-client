@@ -267,5 +267,5 @@ notify.msg = {
 
 // test events - delete when complete
 //notify.showQuit();
-notify.calibration();
-window.addEventListener('orientationchange', notify.startPlay, false);
+//notify.calibration();
+//window.addEventListener('orientationchange', notify.startPlay, false);

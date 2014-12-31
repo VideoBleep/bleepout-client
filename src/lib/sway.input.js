@@ -151,8 +151,8 @@ sway.motion = {
 //                // We may be able to have them point to "the front" first, or even run a system calibration to establish where the compass heading is.
 //                this.calibration = e;
 //            }
-
-        sway.motion.renderIcon(e);
+        // TODO: Future
+        //sway.motion.renderIcon(e);
 
         var plugin = sway.config.channel.plugin;
         var pluginConfig = sway.config.channel[plugin];
@@ -169,6 +169,7 @@ sway.motion = {
             // invert compass
             correctAlpha = 360 - correctAlpha;
 
+            // TODO: deal with issues here
             this.calibration.orientation = e;
             this.calibration.compassHeading = e.webkitCompassHeading;
             this.calibration.correctAlpha = correctAlpha;
