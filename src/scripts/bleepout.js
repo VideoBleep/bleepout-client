@@ -39,6 +39,7 @@ bleepout.controller = function (socket, config) {
         "config": "cfg",
         "calibrate": "cal",
         "calibrationSet": "cst",
+        "calibrationTest": "test",
         "color": "col",
         "play": "play",
         "queued": "que",
@@ -65,7 +66,7 @@ bleepout.controller = function (socket, config) {
         // Take us out of Queued state
         notify.dismiss();
         // start calibration routines
-        notify.calibration(actionSetCalibration);
+        notify.calibration(actionTestCalibration, actionSetCalibration);
     }
     function onStateReady() {
         // Show the "Start Game" button
@@ -93,6 +94,9 @@ bleepout.controller = function (socket, config) {
         // For now, we will assign one from sway config
         socket.send(delimit(socket.delimiter, states.config, red, green, blue));
     }
+    function actionTestCalibration() {
+        self.state = states.calibrationTest;
+    }
     function actionSetCalibration () {
         // TODO: Take current calibration settings and calculate our offset
         // this should be initial.yaw - calibration.yaw
@@ -101,7 +105,7 @@ bleepout.controller = function (socket, config) {
         self.state = states.calibrationSet;
         // TODO: notify bleepout that we are done with calibration
         socket.send(states.calibrate);
-        notify.showLogo();
+        //notify.showLogo();
         // TODO: OR we should just proceed to game ready
     }
     function actionPlayerStart () {

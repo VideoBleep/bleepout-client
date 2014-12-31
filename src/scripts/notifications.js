@@ -31,7 +31,7 @@ notify.queued = function () {
 
 // a user's device must be calibrated in order to control a paddle properly
 // we walk the user through the process:
-notify.calibration = function (callback) {
+notify.calibration = function (callbackTest, callbackSet) {
     var content = notify.modal.firstElementChild,
         logo = document.getElementById('logo');
     logo.className = 'hidden';
@@ -53,6 +53,8 @@ notify.calibration = function (callback) {
     }
 
     function confirm() {
+        // TODO: We need to set the user into a state where they can control the paddle again
+        callbackTest();
         // ask user if things are ok
         content.innerHTML = notify.msg.calibration3;
         // hide ok button
@@ -68,10 +70,16 @@ notify.calibration = function (callback) {
 
     // user clicks yes, calibration is good
         function yesListener() {
-            callback();
+            callbackSet();
             content.innerHTML = notify.msg.getready;
             notify.hideYesNo();
-            setTimeout(notify.dismiss, 5000);
+            setTimeout(function () {
+                notify.dismiss();
+                notify.showLogo();
+                var textNode = document.getElementById('intro-text');
+                textNode.innerHTML = '';
+            }, 5000);
+
             // remove all listeners
             buttonNo.removeEventListener('click', noListener, false);
             buttonYes.removeEventListener('click', yesListener, false);
