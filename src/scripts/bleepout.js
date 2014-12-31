@@ -259,6 +259,9 @@ bleepout.init = function () {
 
     // TODO: JESS: Check for quit cookie here
 
+    if (document.cookie) {
+        console.log('cookie found');
+    }
 
     //sway.oninitialized.add(bleepout.main);
 
