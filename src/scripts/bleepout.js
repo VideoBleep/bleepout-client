@@ -188,7 +188,7 @@ bleepout.orientationHandler = function (e) {
         correctAlpha = e.webkitCompassHeading;
     } else {
         // invert compass
-        if (e.absolute) correctAlpha = 360 - correctAlpha;
+        correctAlpha = 360 - correctAlpha;
     }
 
     // TODO: deal with issues here
