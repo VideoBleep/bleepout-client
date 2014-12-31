@@ -16,6 +16,18 @@ notify.dismiss = function () {
     notify.modal.firstElementChild.innerHTML = '';
 };
 
+
+// this is the first screen a new user sees; it remains until the user is taken out of the queue state
+notify.queued = function () {
+    var logo = document.getElementById('logo'),
+        textNode = document.getElementById('intro-text');
+    // change to white text underneath the logo
+    logo.className = 'logo';
+
+    textNode.className = 'queued-msg';
+    textNode.innerHTML = notify.msg.queued;
+};
+
 // a user's device must be calibrated in order to control a paddle properly
 // we walk the user through the process:
 notify.calibration = function (callback) {
@@ -117,13 +129,6 @@ notify.orientation = function () {
     button.className = 'ok';
     button.addEventListener('click', listener, false);
 };
-
-// this message is visible until the user is taken out of the queue state
-notify.queued = function () {
-    notify.modal.className = 'notify';
-    notify.modal.firstElementChild.innerHTML = notify.msg.queued;
-};
-
 
 // the round has ended, but the player will be allowed to continue if they desire
 notify.roundEnd = function (continueCallback) {
@@ -236,17 +241,14 @@ notify.test = function () {
             background.className = 'background';
         };
 
-
     // enable dismissal button
     button.className = '';
     button.addEventListener('click', listener, false);
 };
 
-
-
 // this obj stores all message text strings
 notify.msg = {
-    queued: "Welcome to Bleepout! You are in the queue; please wait for the next round.",
+    queued: "<div>Welcome to Bleepout!</div><div>You are in the queue; please wait for the next round.</div>",
     orientation: "Bleepout will be even more awesome if you turn off your phone's screen rotation!",
     calibration1: "Let's begin calibration.",
     calibration2: "Please find your paddle on the wall, point your phone at it, and press OK!",
@@ -264,8 +266,7 @@ notify.msg = {
 // we want modal to appear when the user turns their phone
 //window.addEventListener('orientationchange', notify.orientation, false);
 
-
 // test events - delete when complete
 //notify.showQuit();
-//notify.calibration();
-//window.addEventListener('orientationchange', notify.startPlay, false);
+notify.queued();
+window.addEventListener('orientationchange', notify.startPlay, false);

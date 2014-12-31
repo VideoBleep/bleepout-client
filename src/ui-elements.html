@@ -9,12 +9,19 @@
   <link rel="stylesheet" href="scss/style.css">
   <!-- endbuild -->
 </head>
-<body>
+<body onload="bleepout.init();">
 <div id="background"></div>
 
 <div id="container">
 
-  <!-- button -->
+
+  <!-- initial/queued screen -->
+  <div id="logo" class="hidden">
+    <img src="images/pixel%20bleep%20animated%20final.gif">
+    <div id="intro-text"></div>
+  </div>
+
+  <!-- start button -->
   <div class="hidefade" id="start-button">start bleepout!</div>
 
   <!-- paddle -->
@@ -43,21 +50,15 @@
 </div>
 
 <!-- build:js min_bleep.js -->
+<script type="text/javascript" src="scripts/draggable.js"></script>
+<script type="text/javascript" src="scripts/notifications.js"></script>
 <script type="text/javascript" src="lib/cosinedesign.utility.js"></script>
 <script type="text/javascript" src="lib/engine.io.js"></script>
 <script type="text/javascript" src="lib/sway.socket.js"></script>
 <script type="text/javascript" src="lib/sway.input.js"></script>
-<script type="text/javascript" src="lib/sway.user.js"></script>
+<!-- script type="text/javascript" src="lib/sway.user.js"></script -->
 <script type="text/javascript" src="scripts/bleepout.js"></script>
-<script type="text/javascript" src="scripts/draggable.js"></script>
-<script type="text/javascript" src="scripts/notifications.js"></script>
 <!-- endbuild -->
-
-<script>
-  window.onload = function () {
-    window.DeviceOrientationEvent ? bleepout.init() : drag.init();
-  }
-</script>
 
 <div id="debugPanel"></div>
 

@@ -20,6 +20,23 @@ body {
     width: 100vw;
   }
 }
+.queued-msg {
+  margin: 2rem;
+  color: rgba(250, 250, 250, 1);
+  letter-spacing: .5px;
+  font: {
+    family: sans-serif;
+  }
+  div:first-of-type {
+    font-size: 1.5rem;
+    padding-bottom: 1rem;
+  }
+  div:last-of-type {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+}
+
 .paddle {
   width: 20%;
   height: 4%;

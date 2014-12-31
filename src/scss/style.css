@@ -37,6 +37,18 @@ body {
   .logo img {
     width: 100vw; }
 
+.queued-msg {
+  margin: 2rem;
+  color: #fafafa;
+  letter-spacing: .5px;
+  font-family: sans-serif; }
+  .queued-msg div:first-of-type {
+    font-size: 1.5rem;
+    padding-bottom: 1rem; }
+  .queued-msg div:last-of-type {
+    font-size: 1rem;
+    padding: 0 1rem; }
+
 .paddle {
   width: 20%;
   height: 4%;
