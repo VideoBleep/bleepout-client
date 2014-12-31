@@ -18,35 +18,37 @@ notify.dismiss = function () {
 
 // a user's device must be calibrated in order to control a paddle properly
 notify.calibration = function (callback) {
-    // show first set of instructions to user
+
+    // guide the user through the calibration process:
+    var message = notify.modal.firstElementChild;
+
+    // show introduction to user
     notify.modal.className = 'notify';
-    notify.modal.firstElementChild.innerHTML = notify.msg.calibration1;
+    message.innerHTML = notify.msg.calibration1;
 
-    // guide the user through recording these two values:
-    var heading, offset,
-        getHeading = function () {
-            // record heading and then move to the second calibration stage
-            heading = 'something';
+        function startCalibration() {
+            // user clicks ok to proceed to calibration
             notify.modal.firstElementChild.innerHTML = notify.msg.calibration2;
-        },
+        }
 
-        getOffset = function () {
-            // record offset and then dismiss the notification
-            offset = 'something else';
+        function getCalibration() {
+            callback();
             notify.dismiss();
             notify.button.removeEventListener('click', listener, false);
-        },
+        }
 
-        listener = function () {
-            if (!heading) {
-                getHeading();
+        function listener() {
+            if (message.innerHTML === notify.msg.calibration1) {
+                startCalibration();
             } else {
-                getOffset();
+                // user clicks ok in startCalibration
+                getCalibration();
             }
             //notify.dismiss();
-            //callback();
+            //
             //notify.button.removeEventListener('click', listener, false);
-        };
+        }
+
 
     // enable button
     notify.button.className = 'ok';
@@ -184,16 +186,15 @@ notify.hideYesNo = function () {
 };
 
 notify.test = function () {
-    var modal = document.getElementById('notification'),
-        button = document.getElementById('notify-ok'),
+    var background = document.getElementById('background'),
+        button = document.getElementById('quit-button'),
         listener = function () {
-            notify.dismiss();
+            background.className = 'background';
         };
-    notify.modal.firstElementChild.innerHTML = notify.msg.test;
-    modal.className = 'notify';
+
 
     // enable dismissal button
-    button.className = 'ok';
+    button.className = '';
     button.addEventListener('click', listener, false);
 };
 
@@ -219,5 +220,5 @@ notify.msg = {
 
 // test events - delete when complete
 //notify.showQuit();
-//notify.calibration();
+notify.test();
 window.addEventListener('orientationchange', notify.startPlay, false);

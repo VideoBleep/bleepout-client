@@ -11,6 +11,15 @@ body {
   background-color: #000;
 }
 
+.logo {
+  width: 100%;
+  text-align: center;
+  margin-top: 10vh;
+  @include animation(introFade, 4s, 1);
+  img {
+    width: 100vw;
+  }
+}
 .paddle {
   width: 20%;
   height: 4%;
@@ -22,10 +31,10 @@ body {
   box-shadow: inset 1px 1px 10px 1px rgba(255, 255, 255, 0.5), 0 0 10px rgba(0, 0, 0, 0.25);
 }
 
-#background {
+.background {
   // rgb vals will come from sway config response
   // when client disconnects from bleepout, opacity changes to 0
-  background-color: rgba(155, 71, 115, 1);
+  background-color: rgba(221, 0, 170, 1);
   @include animation(backgroundPulse, 7s, 1);
   min-height: 100%;
   text-align: center;
@@ -115,6 +124,17 @@ body {
   &:active {
     background-color: rgba(120, 120, 120, .75);
   }
+}
+
+@keyframes introFade {
+  0% { opacity: 0 }
+  10% { opacity: .25 }
+  100% { opacity: 1 }
+}
+@-webkit-keyframes introFade {
+  0% { opacity: 0 }
+  10% { opacity: .25 }
+  100% { opacity: 1 }
 }
 
 @keyframes backgroundPulse {

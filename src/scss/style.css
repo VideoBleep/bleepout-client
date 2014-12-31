@@ -28,6 +28,15 @@ body {
   margin: 0;
   background-color: #000; }
 
+.logo {
+  width: 100%;
+  text-align: center;
+  margin-top: 10vh;
+  animation: introFade 4s linear 1;
+  -webkit-animation: introFade 4s linear 1; }
+  .logo img {
+    width: 100vw; }
+
 .paddle {
   width: 20%;
   height: 4%;
@@ -38,7 +47,7 @@ body {
   margin: auto;
   box-shadow: inset 1px 1px 10px 1px rgba(255, 255, 255, 0.5), 0 0 10px rgba(0, 0, 0, 0.25); }
 
-#background {
+.background {
   background-color: #dd00aa;
   animation: backgroundPulse 7s linear 1;
   -webkit-animation: backgroundPulse 7s linear 1;
@@ -121,6 +130,20 @@ body {
   #quit-button:active {
     background-color: rgba(120, 120, 120, 0.75); }
 
+@keyframes introFade {
+  0% {
+    opacity: 0; }
+  10% {
+    opacity: 0.25; }
+  100% {
+    opacity: 1; } }
+@-webkit-keyframes introFade {
+  0% {
+    opacity: 0; }
+  10% {
+    opacity: 0.25; }
+  100% {
+    opacity: 1; } }
 @keyframes backgroundPulse {
   0% {
     opacity: 0; }
