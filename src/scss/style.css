@@ -30,12 +30,13 @@ body {
 
 .logo {
   width: 100%;
+  max-width: 600px;
   text-align: center;
   margin-top: 10vh;
   animation: introFade 4s linear 1;
   -webkit-animation: introFade 4s linear 1; }
   .logo img {
-    width: 100vw; }
+    width: 100%; }
 
 .queued-msg {
   margin: 2rem;

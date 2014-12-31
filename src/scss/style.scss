@@ -13,11 +13,12 @@ body {
 
 .logo {
   width: 100%;
+  max-width: 600px;
   text-align: center;
   margin-top: 10vh;
   @include animation(introFade, 4s, 1);
   img {
-    width: 100vw;
+    width: 100%;
   }
 }
 .queued-msg {
