@@ -99,7 +99,13 @@ bleepout.controller = function (socket, config) {
         socket.send(delimit(socket.delimiter, states.start));
     }
     function actionPlayerQuit () {
-        // TODO: JESS: Set quit cookie here
+        // Set quit cookie
+        var setCookie = function (mins) {
+            var expTime = new Date(Date.now() + mins * 60000);
+            return 'name=bleepCookie; expires=' + expTime.toUTCString();
+        };
+        document.cookie = setCookie(5);
+
         self.state = states.quit;
         socket.send(delimit(socket.delimiter, states.quit));
     }
