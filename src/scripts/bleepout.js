@@ -71,13 +71,13 @@ bleepout.controller = function (socket, config) {
     function actionPlayerNew () {
         self.state = states.new;
         // 'new' + id + red + green + blue
-        var m =  delimit(config.delimiter, 'new', 666, config.red, config.blue, config.green);
-        socket.send(m);
+        //var m =  delimit(config.delimiter, 'new', 666, config.red, config.blue, config.green);
+        socket.send('new');
     };
     // Make PlayerNew public
     this.actionPlayerNew = actionPlayerNew;
 
-    // TODO: Set color (NOT YET IMPLEMENTED IN CURRENT VERSION)
+    // TODO: Set color (NOT IMPLEMENTED IN CURRENT VERSION)
     function actionSetColor () {
         self.state = states.config;
         // get color from picker
@@ -107,39 +107,45 @@ bleepout.controller = function (socket, config) {
     function handleMessage (msg) {
         var state,
             pos = msg.indexOf(socket.delimiter);
+
+
         if (pos >= 0) {
             state = msg.substring(0, pos);
-
-            switch (state) {
-                case states.color:
-                    self.state = state;
-                    // Player needs to select color.
-                    onStateColor();
-                    break;
-                case states.queued:
-                    self.state = state;
-                    // Player is queued, waiting for round start / calibrate
-                    onStateQueued();
-                    break;
-                case states.calibrate:
-                    self.state = state;
-                    // Round start: Player should calibrate.
-                    onStateCalibration();
-                    break;
-                case states.ready:
-                    self.state = state;
-                    // Game is ready, awaiting player ready
-                    notify.showQuit(actionPlayerQuit);
-                    onStateReady();
-                    break;
-                case states.play:
-                    self.state = state;
-                    // Game is playing, send control
-                    onStatePlay();
-                    break;
-                default:
-                    break;
-            }
+        } else {
+            state = msg;
+        }
+        switch (state) {
+            // NOT IN USE
+            case states.color:
+                self.state = state;
+                // Player needs to select color.
+                onStateColor();
+                break;
+            case states.queued:
+                self.state = state;
+                // Player is queued, waiting for round start / calibrate
+                onStateQueued();
+                break;
+            case states.calibrate:
+                self.state = state;
+                // Round start: Player should calibrate.
+                onStateCalibration();
+                break;
+            // NOT IN USE
+            case states.ready:
+                self.state = state;
+                // Game is ready, awaiting player ready
+                notify.showQuit(actionPlayerQuit);
+                onStateReady();
+                break;
+            // NOT IN USE
+            case states.play:
+                self.state = state;
+                // Game is playing, send control
+                onStatePlay();
+                break;
+            default:
+                break;
         }
     }
 
