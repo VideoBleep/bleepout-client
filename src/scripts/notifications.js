@@ -20,39 +20,53 @@ notify.dismiss = function () {
 notify.calibration = function (callback) {
 
     // guide the user through the calibration process:
-    var message = notify.modal.firstElementChild;
+    var content = notify.modal.firstElementChild;
 
-    // show introduction to user
-    notify.modal.className = 'notify';
-    message.innerHTML = notify.msg.calibration1;
+    function start () {
+        // show introduction to user
+        notify.modal.className = 'notify';
+        content.innerHTML = notify.msg.calibration1;
+    }
 
-        function startCalibration() {
+        function calibrate() {
             // user clicks ok to proceed to calibration
             notify.modal.firstElementChild.innerHTML = notify.msg.calibration2;
-        }
-
-        function getCalibration() {
             callback();
+        }
+
+        // TODO: Needs to have Ok / Recalibrate buttons
+        function confirm() {
+            notify.button.removeEventListener('click', controller, false);
+        }
+
+        function ok() {
             notify.dismiss();
-            notify.button.removeEventListener('click', listener, false);
+        }
+        function recalibrate () {
+            calibrate();
         }
 
-        function listener() {
-            if (message.innerHTML === notify.msg.calibration1) {
-                startCalibration();
-            } else {
-                // user clicks ok in startCalibration
-                getCalibration();
+        function controller() {
+            switch (content.innerHTML)
+            {
+                case "":
+                    start();
+                    break;
+                case notify.msg.calibration1:
+                    calibrate();
+                    break;
+                case notify.msg.calibration2:
+                    confirm();
+                    break;
+                default:
+
+                    break;
             }
-            //notify.dismiss();
-            //
-            //notify.button.removeEventListener('click', listener, false);
         }
-
 
     // enable button
     notify.button.className = 'ok';
-    notify.button.addEventListener('click', listener, false);
+    notify.button.addEventListener('click', controller, false);
 };
 
 // if a user's device changes orientation, display a message to the user to suggest disabling screen rotation.
