@@ -71,7 +71,7 @@ bleepout.controller = function (socket, config) {
     function actionPlayerNew () {
         self.state = states.new;
         // 'new' + id + red + green + blue
-        var m =  delimit(config.delimiter, 'new',  sway.user.token.uid, config.red, config.blue, config.green);
+        var m =  delimit(config.delimiter, 'new', 666, config.red, config.blue, config.green);
         socket.send(m);
     };
     // Make PlayerNew public
@@ -159,7 +159,7 @@ bleepout.main = function () {
     // Sway has initialized before reaching here
     var cfg = bleepout.playerConfig;
     var conn = new sway.Socket(cfg);
-    var ctl = new bleepout.controller(conn, config);
+    var ctl = new bleepout.controller(conn, cfg);
 
     // TODO: Consider moving below to the controller
     // Handle orientation event
@@ -190,9 +190,11 @@ bleepout.main = function () {
 };
 
 bleepout.init = function () {
-    // Handle sway initialization with
-    sway.oninitialized.add(bleepout.main);
+    // HEY GUYS I HAVE AN IDEA LET'S NOT USE SWAY AT ALL
+    bleepout.main();
+
+    //sway.oninitialized.add(bleepout.main);
 
     // initialize sway
-    sway.init();
+    //sway.init();
 };

@@ -18,6 +18,7 @@ function delimit (delimiter) {
 }
 
 // Multicast Delegate for Event Handlers
+// TODO: Build a chain into multicast
 function multicast(callback) {
     var self = this,
         delegates = [];
