@@ -100,6 +100,7 @@ bleepout.controller = function (socket, config) {
         self.state = states.calibrationSet;
         // TODO: notify bleepout that we are done with calibration
         socket.send(states.calibrate);
+        notify.showLogo();
         // TODO: OR we should just proceed to game ready
     }
     function actionPlayerStart () {
@@ -168,7 +169,7 @@ bleepout.controller = function (socket, config) {
     socket.onConnect.add(actionPlayerNew);
     socket.onMessage.add(handleMessage);
 };
-
+bleepout.orientation = {};
 bleepout.orientationHandler = function (e) {
 //            if (!calibration) {
 //                // This should always be the user pointing towards their desired start point on the screen!
@@ -178,43 +179,27 @@ bleepout.orientationHandler = function (e) {
 
     // Fix for #49, prefer webkitCompassHeading if available.
     var correctAlpha = e.alpha;
-    if (!e.absolute) correctAlpha = e.webkitCompassHeading;
+    if (!e.absolute && e.webkitCompassHeading) correctAlpha = e.webkitCompassHeading;
 
     // invert compass
     correctAlpha = 360 - correctAlpha;
 
     // TODO: deal with issues here
-    this.calibration.orientation = e;
-    this.calibration.compassHeading = e.webkitCompassHeading;
-    this.calibration.correctAlpha = correctAlpha;
+    bleepout.calibration.orientation = e;
+    bleepout.calibration.compassHeading = e.webkitCompassHeading;
+    bleepout.calibration.correctAlpha = correctAlpha;
 
-    var o = {
+    bleepout.orientation = {
         alpha: correctAlpha,
         beta: e.beta,
         gamma: e.gamma,
         absolute: e.absolute
     };
 
-    sway.motion.current = {control: {orientation: o}};
-
     // Set the throttle for input
     if (!sway.poll) {
         sway.poll = window.setInterval(function () {
-            //TODO: If the channel changes, we should kill the interval and reset it.
-
-            // idle is when the last motion event is the same as current
-            // set or unset idle timeout and control interval.
-            if (sway.motion.idle((sway.motion.last === sway.motion.current))) {
-                window.clearInterval(sway.poll);
-                return;
-            }
-
-            // for obvious reasons which won't appear obvious later ... this line must come after the check above
-            sway.motion.last = sway.motion.current;
-
-            // TODO: rewire this
-            sway.motion.onOrientation(sway.motion.current.control.orientation);
-
+            bleepout.onOrientation(bleepout.orientation);
         }, bleepout.playerConfig.controlInterval);
     }
 };
@@ -245,10 +230,13 @@ bleepout.main = function () {
                 break;
             default:
                 var yaw = orient.alpha;
-                if (cal.offset) yaw += cal.offset.yaw;
+                if (cal.offset) {
+                    yaw += cal.offset.yaw;
+                }
                 // domeHeading is the dome calibration offset
-                yaw += domeHeading;
-                conn.send(delimit(cfg.delimiter, 'ypr', orient.alpha, orient.beta, orient.gamma));
+                yaw += bleepout.calibration.domeHeading;
+                if (yaw) yaw = yaw / 360; //(scale to 0-1)
+                conn.send(delimit(cfg.delimiter, 'ypr', yaw, orient.beta, orient.gamma));
                 break;
         }
     });
@@ -260,7 +248,7 @@ bleepout.onOrientation = multicast();
 bleepout.init = function () {
 
     if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', bleepout.onOrientation);
+        window.addEventListener('deviceorientation', bleepout.orientationHandler);
     } else {
         // TODO: dialog "Your device does not support accelerometer "
     }
