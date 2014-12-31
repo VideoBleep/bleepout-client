@@ -16,14 +16,16 @@ notify.dismiss = function () {
     notify.modal.firstElementChild.innerHTML = '';
 };
 
+notify.showLogo = function () {
+    var logo = document.getElementById('logo');
+    // change to white text underneath the logo
+    logo.className = 'logo';
+};
 
 // this is the first screen a new user sees; it remains until the user is taken out of the queue state
 notify.queued = function () {
-    var logo = document.getElementById('logo'),
-        textNode = document.getElementById('intro-text');
-    // change to white text underneath the logo
-    logo.className = 'logo';
-
+    var textNode = document.getElementById('intro-text');
+    notify.showLogo();
     textNode.className = 'queued-msg';
     textNode.innerHTML = notify.msg.queued;
 };
@@ -31,7 +33,9 @@ notify.queued = function () {
 // a user's device must be calibrated in order to control a paddle properly
 // we walk the user through the process:
 notify.calibration = function (callback) {
-    var content = notify.modal.firstElementChild;
+    var content = notify.modal.firstElementChild,
+        logo = document.getElementById('logo');
+    logo.className = 'hidden';
 
     function start() {
         // "let's begin calibration!"
@@ -79,7 +83,6 @@ notify.calibration = function (callback) {
             // return user to calibrate step
             notify.hideYesNo();
             recalibrate();
-
         }
     }
 
@@ -269,4 +272,4 @@ notify.msg = {
 // test events - delete when complete
 //notify.showQuit();
 notify.queued();
-window.addEventListener('orientationchange', notify.startPlay, false);
+window.addEventListener('orientationchange', notify.calibration, false);
