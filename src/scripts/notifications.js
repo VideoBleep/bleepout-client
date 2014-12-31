@@ -267,9 +267,5 @@ notify.msg = {
 };
 
 // we want orientation modal to appear when the user turns their phone
-//window.addEventListener('orientationchange', notify.orientation, false);
 
-// test events - delete when complete
-//notify.showQuit();
-notify.queued();
-window.addEventListener('orientationchange', notify.calibration, false);
+window.addEventListener('orientationchange', notify.orientation, false);
