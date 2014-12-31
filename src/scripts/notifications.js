@@ -35,12 +35,12 @@ notify.calibration = function (callbackTest, callbackSet) {
     var content = notify.modal.firstElementChild,
         logo = document.getElementById('logo');
     logo.className = 'hidden';
-    content.innerHTML = '';
+    var textNode = document.getElementById('intro-text');
+    textNode.innerHTML = '';
 
     function start() {
         // "let's begin calibration!"
         notify.modal.className = 'notify';
-        content.innerHTML = notify.msg.calibration1;
 
         // enable button
         notify.button.className = 'ok';
