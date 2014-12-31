@@ -17,56 +17,86 @@ notify.dismiss = function () {
 };
 
 // a user's device must be calibrated in order to control a paddle properly
+// we walk the user through the process:
 notify.calibration = function (callback) {
-
-    // guide the user through the calibration process:
     var content = notify.modal.firstElementChild;
 
-    function start () {
-        // show introduction to user
+    function start() {
+        // "let's begin calibration!"
         notify.modal.className = 'notify';
         content.innerHTML = notify.msg.calibration1;
+
+        // enable button
+        notify.button.className = 'ok';
+        notify.button.addEventListener('click', controller, false);
     }
 
-        function calibrate() {
-            // user clicks ok to proceed to calibration
-            notify.modal.firstElementChild.innerHTML = notify.msg.calibration2;
-            callback();
-        }
+    function calibrate() {
+        // user initiates calibration method
+        content.innerHTML = notify.msg.calibration2;
+        callback();
+    }
 
-        // TODO: Needs to have Ok / Recalibrate buttons
-        function confirm() {
+    function confirm() {
+        // ask user if things are ok
+        content.innerHTML = notify.msg.calibration3;
+        // hide ok button
+        notify.button.className = 'hidden';
+
+        // enable yes/no buttons
+        var buttonYes = document.getElementById('notify-yes'),
+            buttonNo = document.getElementById('notify-no');
+        notify.showYesNo();
+
+        buttonYes.addEventListener('click', yesListener, false);
+        buttonNo.addEventListener('click', noListener, false);
+
+    // user clicks yes, calibration is good
+        function yesListener() {
+            content.innerHTML = notify.msg.getready;
+            notify.hideYesNo();
+            setTimeout(notify.dismiss, 5000);
+            // remove all listeners
+            buttonNo.removeEventListener('click', noListener, false);
+            buttonYes.removeEventListener('click', yesListener, false);
             notify.button.removeEventListener('click', controller, false);
         }
 
-        function ok() {
-            notify.dismiss();
-        }
-        function recalibrate () {
-            calibrate();
-        }
+    // user clicks no, calibration is off
+        function noListener() {
+            // return user to calibrate step
+            notify.hideYesNo();
+            recalibrate();
 
-        function controller() {
-            switch (content.innerHTML)
-            {
-                case "":
-                    start();
-                    break;
-                case notify.msg.calibration1:
-                    calibrate();
-                    break;
-                case notify.msg.calibration2:
-                    confirm();
-                    break;
-                default:
-
-                    break;
-            }
         }
+    }
 
-    // enable button
-    notify.button.className = 'ok';
-    notify.button.addEventListener('click', controller, false);
+    function ok() {
+        notify.dismiss();
+    }
+
+    function recalibrate() {
+        notify.button.className = 'ok';
+        calibrate();
+    }
+
+    function controller() {
+        switch (notify.modal.firstElementChild.innerHTML) {
+            case "":
+                start();
+                break;
+            case notify.msg.calibration1:
+                calibrate();
+                break;
+            case notify.msg.calibration2:
+                confirm();
+                break;
+            default:
+
+                break;
+        }
+    }
+    start();
 };
 
 // if a user's device changes orientation, display a message to the user to suggest disabling screen rotation.
@@ -151,7 +181,7 @@ notify.quit = function (quitCallback) {
 
         // user decides not to quit game
         noListener = function () {
-            notify.modal.firstElementChild.innerHTML = "Sweet!";
+            notify.modal.firstElementChild.innerHTML = notify.msg.sweet;
             notify.hideYesNo();
             setTimeout(notify.dismiss, 1000);
             buttonNo.removeEventListener('click', noListener, false);
@@ -220,11 +250,14 @@ notify.msg = {
     orientation: "Bleepout will be even more awesome if you turn off your phone's screen rotation!",
     calibration1: "Let's begin calibration.",
     calibration2: "Please find your paddle on the wall, point your phone at it, and press OK!",
+    calibration3: "is it ok?",
     quit: "Do you really want to quit?",
     goodbye: "Thanks for Bleeping Out with us!",
     roundend: "Round over. Would you like to keep playing?",
     waitnext: "Awesome! Please wait for the next round to begin.",
     gameover: "Round over. Your time is up: thanks for Bleeping Out with us!",
+    getready: "Great! Get ready, we're about to begin.",
+    sweet: "Sweet!",
     test: "Test message"
 };
 
@@ -234,5 +267,5 @@ notify.msg = {
 
 // test events - delete when complete
 //notify.showQuit();
-notify.test();
+notify.calibration();
 window.addEventListener('orientationchange', notify.startPlay, false);
