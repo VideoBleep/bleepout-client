@@ -248,7 +248,7 @@ notify.test = function () {
 
 // this obj stores all message text strings
 notify.msg = {
-    queued: "<div>Welcome to Bleepout!</div><div>You are in the queue; please wait for the next round.</div>",
+    queued: "<span>Welcome to Bleepout!</span><br><span>You are in the queue; please wait for the next round.</span>",
     orientation: "Bleepout will be even more awesome if you turn off your phone's screen rotation!",
     calibration1: "Let's begin calibration.",
     calibration2: "Please find your paddle on the wall, point your phone at it, and press OK!",
@@ -263,10 +263,5 @@ notify.msg = {
     test: "Test message"
 };
 
-// we want modal to appear when the user turns their phone
+// we want orientation modal to appear when the user turns their phone
 //window.addEventListener('orientationchange', notify.orientation, false);
-
-// test events - delete when complete
-//notify.showQuit();
-notify.queued();
-window.addEventListener('orientationchange', notify.startPlay, false);
