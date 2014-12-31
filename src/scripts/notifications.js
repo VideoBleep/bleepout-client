@@ -18,7 +18,6 @@ notify.dismiss = function () {
 
 notify.showLogo = function () {
     var logo = document.getElementById('logo');
-    // change to white text underneath the logo
     logo.className = 'logo';
 };
 
@@ -36,6 +35,7 @@ notify.calibration = function (callback) {
     var content = notify.modal.firstElementChild,
         logo = document.getElementById('logo');
     logo.className = 'hidden';
+    content.innerHTML = '';
 
     function start() {
         // "let's begin calibration!"
